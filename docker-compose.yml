@@ -1,0 +1,20 @@
+version: "3"
+services:
+  pan-proxy:
+    container_name: pan-proxy
+    image: nginx:latest
+    depends_on:
+      - pan-hr-api-ch # References the service name.
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./content:/usr/share/nginx/html
+    ports:
+      - 80:80 # Publishs only port 80 outside of docker compose context.
+
+  pan-hr-api-ch:
+    container_name: pan-hr-api-ch # Sets the docker internal hostname to be called on http://pan-hr-api-ch.
+    image: pan-hr-api
+    environment:
+      - CONFIG_FILE_ENV=ch-jni-local # The config file instructs to provide an URL following "/ch/api/...".
+      - API_PORT=8081 # Will start HR API on port 8081 in docker compose context.
+      - TZ=UTC # Sets the timezone to UTC
