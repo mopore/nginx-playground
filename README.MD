@@ -22,7 +22,7 @@ The following description uses an example with node.js. It is expected that the 
 ### nginx Configuration
 Taking a look into the http section of the [nginx configuration (config/nginx.conf)](/config/nginx.conf):
 
-```
+```nginx
 http {
 	server {
 
@@ -49,7 +49,7 @@ The name of the hostname will be defined in the docker-compose file. Providing t
 
 ### Docker Compose Configuration
 Taking a look into the [docker compose configuration](docker-compose.yml):
-```
+```yaml
 version: "3"
 services:
   pan-proxy:
