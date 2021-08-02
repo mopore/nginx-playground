@@ -81,7 +81,23 @@ Our background container also comes with environment variables that will be read
 ### Provide the right port to run your container
 As you remember, the nginx configuration avoids the container on port 8081. This port number is redundantly defined as an environment variable ("API_PORT") for the container that can be read out to launch the server, as shown in the code below: 
 
-![Providing the correct port](/images/code_port.png)
+```typescript
+import express from "express";
+import { Functions } from  "./Functions";
+
+const apiPortRaw = process.env["API_PORT"];
+const apiPort = Number(apiPortRaw);
+
+const app = express();
+app.use( express.json() );
+Functions.apply( app );
+export const server = app;
+
+server.listen( 
+	apiPort, 
+	() => console.info( `PAN HR API Server is listening at port ${apiPort}...`) 
+);
+```
 
 *Note:* For testing purposes, use an extra line `port` in your docker-compose config of your "background container" to test if your container properly starts and is reachable.
 
@@ -89,4 +105,24 @@ As you remember, the nginx configuration avoids the container on port 8081. This
 Inside the container application, provide the path ("/ch/api"), which is expected from the nginx configuration. 
 In the example below the path is compiled by a country code ("ch") and "api" plus further additions like "test" to provide a quick "is alive" test call. The country code is delivered within a country-specific configuration file. To point the application to the correct config file, the environment variable "CONFIG_FILE_ENV" has been passed.
 
-![Providing the correct path](/images/code_path.png)
+```typescript
+static apply( app: Express ): void {
+    const countryCode = ConfigService.resolveCountryId();
+
+    // Test if API is available
+    const testPath = `/${countryCode}/api/test`;
+    app.get(testPath, ( req, resp ) => {
+        try {
+            const country = req.query.country ?? EMPTY_TEXT;
+            console.log(`Country recieved: ${country}`);
+            const simpleAnswer: SimpleResponse = {answer: "YES"}
+            resp.send( simpleAnswer );
+        }
+        catch (error) {
+            console.error(error);
+            console.trace();
+            return resp.status(400).send({error: String(error)});
+        }
+    });
+}
+```
