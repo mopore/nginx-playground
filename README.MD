@@ -2,8 +2,7 @@ NGINX Playground - Reverse Proxy
 ================================
 
 ## What is it about
-This project demonstrates how to setup a nginx as a docker container to redirect path-specific 
-http requests to a "background container" not running on a port 80.
+This project demonstrates how to setup a nginx as a docker container (on port 80) to redirect path-specific http requests to another docker-internal container (not running on port 80).
 While using docker-compose and the default network, the above setup will create the only way the "background container" will be accessible outside of the docker network.
 
 In concrete, all requests to http://localhost/ch/api/ will be redirected to container named "pan-hr-api-ch" running on the internal port 8081. A request to http://localhost will lead to a default nginx welcome page (index.html).
